@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Pemesanan Hotel Transylvania</title>
+    <script src="js/jquery-3.7.1.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+        }
+        .form-group {
+            margin: 10px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, select, button {
+            padding: 8px;
+            width: 100%;
+            margin: 5px 0;
+        }
+        .total-price {
+            margin-top: 20px;
+        }
+        .error {
+            color: red;
+        }
+        .resume {
+            margin-top: 30px;
+            border: 1px solid #ddd;
+            padding: 20px;
+        }
+        .resume h3 {
+            margin-bottom: 15px;
+        }
+        /* Menambahkan warna biru muda pada tombol Simpan Pemesanan */
+        #save {
+            background-color: #add8e6;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        /* Menambahkan tombol Batalkan */
+        #cancel {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Form Pemesanan Hotel</h2>
+    <form id="orderForm">
+        <div class="form-group">
+            <label for="name">Nama Pemesan</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="gender">Jenis Kelamin</label>
+            <select id="gender" name="gender" required>
+                <option value="laki-laki">Laki-laki</option>
+                <option value="perempuan">Perempuan</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="idNumber">Nomor Identitas (16 Digit)</label>
+            <input type="text" id="idNumber" name="idNumber" required>
+            <div id="idNumberError" class="error"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="roomType">Tipe Kamar</label>
+            <select id="roomType" name="roomType" required>
+                <option value="standar" data-price="500000">Standar - Rp 500.000</option>
+                <option value="delux" data-price="750000">Delux - Rp 750.000</option>
+                <option value="family" data-price="1000000">Family - Rp 1.000.000</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="checkInDate">Tanggal Pemesanan</label>
+            <input type="date" id="checkInDate" name="checkInDate" required>
+        </div>
+
+        <div class="form-group">
+            <label for="duration">Durasi Menginap (Hari)</label>
+            <input type="number" id="duration" name="duration" min="1" required>
+            <div id="durationError" class="error"></div>
+        </div>
+
+        <div class="form-group">
+            <label>
+                <input type="checkbox" id="breakfast" name="breakfast"> Termasuk Breakfast (Rp 80.000)
+            </label>
+        </div>
+
+        <!-- Tombol Simpan Pemesanan -->
+        <button type="button" id="save">Simpan Pemesanan</button>
+        <!-- Tombol Batalkan -->
+        <button type="button" id="cancel">Batalkan</button>
+
+        <div class="total-price">
+            <h3>Total Bayar: <span id="totalPrice">Rp 0</span></h3>
+        </div>
+    </form>
+
+    <!-- Resume Pemesanan -->
+    <div id="resume" class="resume" style="display: none;">
+        <h3>Resume Pemesanan</h3>
+        <p><strong>Nama Pemesan:</strong> <span id="resumeName"></span></p>
+        <p><strong>Nomor Identitas:</strong> <span id="resumeIdNumber"></span></p>
+        <p><strong>Jenis Kelamin:</strong> <span id="resumeGender"></span></p>
+        <p><strong>Tipe Kamar:</strong> <span id="resumeRoomType"></span></p>
+        <p><strong>Durasi Menginap:</strong> <span id="resumeDuration"></span> hari</p>
+        <p><strong>Diskon:</strong> <span id="resumeDiscount"></span></p>
+        <p><strong>Total Bayar:</strong> <span id="resumeTotalPrice"></span></p>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#save').click(function() {
+            var name = $('#name').val().trim();
+            var idNumber = $('#idNumber').val().trim();
+            var gender = $('#gender').val();
+            var roomType = $('#roomType').find(':selected').text();
+            var roomPrice = parseInt($('#roomType').find(':selected').data('price'));
+            var duration = $('#duration').val().trim();
+            var breakfast = $('#breakfast').is(':checked');
+            var error = false;
+
+            // Reset error messages
+            $('#idNumberError').text('');
+            $('#durationError').text('');
+
+            // Validasi nomor identitas (16 digit)
+            if (idNumber.length !== 16 || isNaN(idNumber)) {
+                $('#idNumberError').text('Isian harus 16 digit');
+                error = true;
+            }
+
+            // Validasi durasi menginap
+            if (!duration || isNaN(duration) || duration <= 0) {
+                $('#durationError').text('Durasi menginap harus berupa angka yang valid');
+                error = true;
+            }
+
+            if (error) return;
+
+            // Hitung harga total
+            var totalPrice = roomPrice * duration;
+            var discount = 0;
+            if (duration > 3) {
+                discount = totalPrice * 0.1;  // Diskon 10% untuk menginap lebih dari 3 hari
+                totalPrice = totalPrice - discount;
+            }
+            if (breakfast) {
+                totalPrice += 80000;  // Tambahan untuk breakfast
+            }
+
+            // Menampilkan Resume Pemesanan
+            $('#resumeName').text(name);
+            $('#resumeIdNumber').text(idNumber);
+            $('#resumeGender').text(gender);
+            $('#resumeRoomType').text(roomType);
+            $('#resumeDuration').text(duration);
+            $('#resumeDiscount').text(discount > 0 ? 'Rp ' + discount.toLocaleString() : 'Tidak ada diskon');
+            $('#resumeTotalPrice').text('Rp ' + totalPrice.toLocaleString());
+
+            // Menampilkan resume
+            $('#resume').show();
+
+            // Menampilkan total harga pada form
+            $('#totalPrice').text('Rp ' + totalPrice.toLocaleString());
+        });
+
+        // Fungsi untuk membatalkan pesanan
+        $('#cancel').click(function() {
+            // Reset form
+            $('#orderForm')[0].reset();
+            $('#idNumberError').text('');
+            $('#durationError').text('');
+            $('#resume').hide();
+            $('#totalPrice').text('Rp 0');
+        });
+    });
+</script>
+
+</body>
+</html>

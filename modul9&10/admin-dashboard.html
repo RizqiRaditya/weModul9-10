@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kelola Kamar - Hotel Transylvania</title>
+  <link rel="stylesheet" href="admin-dashboard.css">
+</head>
+<body>
+  <header>
+    <h1>Kelola Kamar</h1>
+  </header>
+
+  <section class="room-management">
+    <h2>Tambah Jenis Kamar</h2>
+    <form>
+      <label for="room-type">Tipe Kamar:</label>
+      <input type="text" id="room-type" name="room-type" placeholder="Misal: Premium, Regular" required>
+
+      <label for="room-description">Deskripsi:</label>
+      <textarea id="room-description" name="room-description" placeholder="Deskripsi kamar" required></textarea>
+
+      <label for="room-price">Harga per Malam:</label>
+      <input type="number" id="room-price" name="room-price" placeholder="Harga" required>
+
+      <button type="submit">Simpan</button>
+    </form>
+
+    <h2>Daftar Kamar</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Nama Kamar</th>
+          <th>Deskripsi</th>
+          <th>Harga</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Regular</td>
+          <td>Kamar standar dengan fasilitas dasar</td>
+          <td>Rp. 500,000</td>
+          <td><button>Hapus</button></td>
+        </tr>
+        <tr>
+          <td>Premium</td>
+          <td>Kamar dengan fasilitas lengkap dan pemandangan</td>
+          <td>Rp. 1,000,000</td>
+          <td><button>Hapus</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Hotel Transylvania</p>
+  </footer>
+</body>
+</html>
